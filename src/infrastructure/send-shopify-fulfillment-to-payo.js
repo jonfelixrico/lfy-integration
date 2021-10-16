@@ -29,7 +29,7 @@ const PAYO_CREATE_ORDER_ENDPOINT = "order/create";
  * The fulfillment data that we received from Shopify is formatted to send a order created request to Payo.
  * @param {Object} fulfillmentObject Payload from one of Shopify's fulfillment-related webhook topics.
  */
-async function sendShopifyFulfillmentObjectToPayo(fulfillmentObject) {
+async function sendShopifyFulfillmentToPayo(fulfillmentObject) {
   const toSendToPayo = formatShopifyFulfillmentObjectToPayoOrderObject(
     fulfillmentObject,
     payoApiConstants
@@ -49,5 +49,5 @@ async function sendShopifyFulfillmentObjectToPayo(fulfillmentObject) {
 }
 
 module.exports = {
-  sendShopifyFulfillmentObjectToPayo,
+  sendShopifyFulfillmentToPayo,
 };
