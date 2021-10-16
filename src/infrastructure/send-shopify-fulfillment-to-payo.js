@@ -1,5 +1,5 @@
-const axios = require("axios");
-const qs = require("qs");
+import axios from "axios";
+import qs from "qs";
 
 const PAYO_API_HOST = "https://api.payo.asia";
 
@@ -29,7 +29,7 @@ const PAYO_CREATE_ORDER_ENDPOINT = "order/create";
  * The fulfillment data that we received from Shopify is formatted to send a order created request to Payo.
  * @param {Object} fulfillmentObject Payload from one of Shopify's fulfillment-related webhook topics.
  */
-async function sendShopifyFulfillmentToPayo(fulfillmentObject) {
+export async function sendShopifyFulfillmentToPayo(fulfillmentObject) {
   const toSendToPayo = formatShopifyFulfillmentObjectToPayoOrderObject(
     fulfillmentObject,
     payoApiConstants
@@ -47,7 +47,3 @@ async function sendShopifyFulfillmentToPayo(fulfillmentObject) {
     );
   }
 }
-
-module.exports = {
-  sendShopifyFulfillmentToPayo,
-};
