@@ -9,7 +9,7 @@ const sha256 = require("crypto-js/sha256");
  */
 function generatePayoSignature(
   { contact: { email, firstname, lastname }, items },
-  { clientId, pgwId, paymentApiKey }
+  { clientId, pgwId, pgwKey }
 ) {
   const toBeSigned = [
     /*
@@ -22,7 +22,7 @@ function generatePayoSignature(
     items.length,
     clientId,
     pgwId,
-    paymentApiKey,
+    pgwKey,
   ].join("");
 
   return sha256(toBeSigned);
