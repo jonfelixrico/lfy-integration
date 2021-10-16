@@ -8,9 +8,11 @@ import sha256 from "crypto-js/sha256";
  * @returns
  */
 function generatePayoSignature(
-  { contact: { email, firstname, lastname }, items },
+  { contact, items },
   { clientId, pgwId, pgwKey }
 ) {
+  const { email, firstname, lastname } = contact ?? {};
+
   const toBeSigned = [
     /*
      * The ordering of the items here are as prescribed by Payo.
@@ -36,22 +38,22 @@ function generatePayoSignature(
  * @returns
  */
 export function formatShopifyFulfillmentObjectToPayoOrderObject(
-  {
-    destination: {
-      first_name,
-      last_name,
-      phone,
-      country,
-      province,
-      address_1,
-      address_2,
-      zip,
-    },
-    line_items,
-    order_id,
-  },
+  { destination, line_items, order_id },
   payoApiConstants
 ) {
+  line_items = line_items ?? [];
+
+  const {
+    first_name,
+    last_name,
+    phone,
+    country,
+    province,
+    address_1,
+    address_2,
+    zip,
+  } = destination ?? {};
+
   const { clientId, pgwId } = payoApiConstants;
 
   const orderObject = {
@@ -75,13 +77,15 @@ export function formatShopifyFulfillmentObjectToPayoOrderObject(
     pgw_id: pgwId,
   };
 
-  orderObject.items = line_items.map(({ product_id, price, quantity }) => {
-    return {
-      id: product_id,
-      price, // we'll assume that this is in PHP
-      quantity,
-    };
-  });
+  orderObject.items = line_items
+    .filter(Boolean)
+    .map(({ product_id, price, quantity }) => {
+      return {
+        id: product_id,
+        price, // we'll assume that this is in PHP
+        quantity,
+      };
+    });
 
   /*
    * The population of object properties above must be done before `generatePayoSignature`. What we populated above
