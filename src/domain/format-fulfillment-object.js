@@ -1,4 +1,4 @@
-const sha256 = require("crypto-js/sha256");
+import sha256 from "crypto-js/sha256";
 
 /**
  * Generates the signature required by payo when creating order requests.
@@ -35,7 +35,7 @@ function generatePayoSignature(
  * @param {Object} payoApiConstants Contains properties that allows us to talk to Payo
  * @returns
  */
-function formatShopifyFulfillmentObjectToPayoOrderObject(
+export function formatShopifyFulfillmentObjectToPayoOrderObject(
   {
     destination: {
       first_name,
@@ -93,7 +93,3 @@ function formatShopifyFulfillmentObjectToPayoOrderObject(
 
   return orderObject;
 }
-
-module.exports = {
-  formatShopifyFulfillmentObjectToPayoOrderObject,
-};
