@@ -29,6 +29,7 @@ function generatePayoSignature(
 }
 
 /**
+ * Converts an object that follows the structure of Shopify's Fulfillment object into what Payo requires when doing a Order create request.
  *
  * @param {Object} shopifyFullfilmentObject An object that follows the schema defined by Shopify for their Fulfillment object
  * @param {Object} payoApiConstants Contains properties that allows us to talk to Payo
