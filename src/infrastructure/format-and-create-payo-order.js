@@ -1,6 +1,17 @@
 const axios = require("axios");
 const qs = require("qs");
 
+const PAYO_API_HOST = "https://api.payo.asia";
+
+/**
+ * Preconfigured Axios instance just for talking to Payo. Use this instead of using `axios` directly.
+ */
+const payoAxios = axios.create({
+  baseURL: PAYO_API_HOST,
+  headers: { "content-type": "application/x-www-form-urlencoded" },
+  transformRequest: (data) => qs.stringify(data),
+});
+
 const {
   formatShopifyFulfillmentObjectToPayoOrderObject,
 } = require("../domain/format-fulfillment-object");
@@ -12,30 +23,26 @@ const payoApiConstants = {
   pgwKey: PAYO_PGW_KEY,
 };
 
-const PAYO_CREATE_ORDER_URL = "https://api.payo.asia/order/create";
+const PAYO_CREATE_ORDER_ENDPOINT = "order/create";
 
 /**
  * The fulfillment data that we received from Shopify is formatted to send a order created request to Payo.
- * @param {Object} webhookPayload Payload from one of Shopify's fulfillment-related webhook topics.
+ * @param {Object} fulfillmentObject Payload from one of Shopify's fulfillment-related webhook topics.
  */
-async function sendShopifyFulfillmentObjectToPayo(webhookPayload) {
+async function sendShopifyFulfillmentObjectToPayo(fulfillmentObject) {
   const toSendToPayo = formatShopifyFulfillmentObjectToPayoOrderObject(
-    webhookPayload,
+    fulfillmentObject,
     payoApiConstants
   );
 
   try {
-    await axios.post(
-      PAYO_CREATE_ORDER_URL,
-      qs.stringify(toSendToPayo), // since we're using the urlencoded type, we have to encode the payload before sending it
-      {
-        headers: { "content-type": "application/x-www-form-urlencoded" },
-      }
+    await payoAxios.post(PAYO_CREATE_ORDER_ENDPOINT, toSendToPayo);
+    console.log(
+      `Successfully sent order ${fulfillmentObject.order_id} to Payo.`
     );
-    console.log(`Successfully sent order ${webhookPayload.order_id} to Payo.`);
   } catch (e) {
     console.error(
-      `Something went wrong while trying to send order ${webhookPayload.order_id}.`,
+      `Something went wrong while trying to send order ${fulfillmentObject.order_id}.`,
       e
     );
   }
